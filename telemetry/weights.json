@@ -1,0 +1,8 @@
+{
+  "risk_mean": 0.35,
+  "scope": 0.25,
+  "workload": 0.15,
+  "compliance": 0.1,
+  "data_quality": 0.1,
+  "third_party": 0.05
+}
