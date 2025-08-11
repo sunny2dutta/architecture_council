@@ -32,19 +32,23 @@ class DecisionPolicy:
         )
         return max(0.0, min(1.0, edr))
 
-    def decide(self, state: DebateState, ranked_questions: List[Tuple[str, float]]) -> DecisionOutput:
+    def decide(self, state: DebateState, ranked_questions):
         edr = self.compute_edr(state)
         ig_star = ranked_questions[0][1] if ranked_questions else 0.0
+
         if edr > self.ask_threshold and ig_star >= self.ig_threshold:
             top_qs = [q for q, _ in ranked_questions[:3]]
             return DecisionOutput(
                 route="ASK",
                 reason=f"EDR={edr:.2f}, IG*={ig_star:.2f} -> Ask for high information gain",
-                questions=top_qs
+                questions=top_qs,
+                edr=edr,
+                ig_star=ig_star,
             )
         else:
-            # placeholder empty design, to be filled by orchestrator
             return DecisionOutput(
                 route="DESIGN",
-                reason=f"EDR={edr:.2f}, IG*={ig_star:.2f} -> Confident enough to propose a design"
+                reason=f"EDR={edr:.2f}, IG*={ig_star:.2f} -> Confident enough to propose a design",
+                edr=edr,
+                ig_star=ig_star,
             )

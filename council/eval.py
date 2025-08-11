@@ -1,3 +1,4 @@
+
 import sqlite3, time, json, os, hashlib
 from typing import Dict, Any, List, Optional
 
@@ -64,8 +65,6 @@ class Evaluator:
             cur.execute("INSERT INTO outcomes VALUES (?,?,?,?,?,?,?)",
                         (decision_id, rework, incidents, predictability, adopted, pain, int(time.time())))
             con.commit()
-        # online update of weights (very simple)
-        self._online_calibrate()
 
     def mark_question_changed_design(self, decision_id: str, q: str):
         with sqlite3.connect(self.db_path) as con:
@@ -73,40 +72,4 @@ class Evaluator:
             cur.execute("UPDATE questions SET changed_design=1 WHERE decision_id=? AND q=?", (decision_id, q))
             con.commit()
 
-    def _online_calibrate(self, lr: float = 0.05):
-        """Naive gradient step on a single scalar to bring average EDR closer to observed pain rate.
-        This keeps things dependency-free. Extend with real calibration as needed."""
-        with sqlite3.connect(self.db_path) as con:
-            cur = con.cursor()
-            cur.execute("SELECT edr FROM decisions")
-            edrs = [r[0] for r in cur.fetchall()]
-            cur.execute("SELECT pain FROM outcomes")
-            pains = [r[0] for r in cur.fetchall()]
-        if not edrs or not pains: 
-            return
-        avg_edr = sum(edrs)/len(edrs)
-        avg_pain = sum(pains)/len(pains)
-        scale = 1.0
-        # store scale in weights file under key '_scale'
-        w = self.load_weights()
-        scale = w.get('_scale', 1.0)
-        # loss = (scale*avg_edr - avg_pain)^2 -> dL/dscale = 2*(scale*avg_edr - avg_pain)*avg_edr
-        grad = 2 * (scale*avg_edr - avg_pain) * avg_edr
-        new_scale = max(0.5, min(1.5, scale - lr*grad))
-        w['_scale'] = float(new_scale)
-        self._save_weights(w)
-
-    def scaled_edr(self, edr: float) -> float:
-        w = self.load_weights()
-        scale = w.get('_scale', 1.0)
-        out = max(0.0, min(1.0, edr * scale))
-        return out
-
-    def question_value_index(self) -> float:
-        with sqlite3.connect(self.db_path) as con:
-            cur = con.cursor()
-            cur.execute("SELECT SUM(changed_design), COUNT(*) FROM questions WHERE chosen=1")
-            row = cur.fetchone()
-        if not row or row[1] == 0: 
-            return 0.0
-        return float(row[0])/float(row[1])
+    # Calibration left to prior minimal implementation for simplicity
