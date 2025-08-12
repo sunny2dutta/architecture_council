@@ -89,7 +89,10 @@ def main():
     brief = parse_paragraph_to_brief(client, paragraph)
     print("Structured problem")
     print(brief)
-    policy = DecisionPolicy()
+    policy = DecisionPolicy(
+        ask_threshold=0.20,   # was 0.55
+        ig_threshold=0.03     # was 0.15
+    )
     logger = TraceLogger(path="logs/decision_traces.jsonl")
     orch = Orchestrator(policy, agents, logger)
 

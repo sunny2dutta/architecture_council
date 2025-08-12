@@ -12,7 +12,7 @@ class DeepSeekClient:
       DEEPSEEK_DEBUG      set to "1" to print request/response debug
     """
     def __init__(self, api_base: str=None, api_key: str=None, model: str=None,
-                 timeout: int=60, read_timeout: int=60, retries: int=3, backoff: float=1.5,
+                 timeout: int=60, read_timeout: int=100, retries: int=3, backoff: float=1.5,
                  debug: Optional[bool]=None):
         self.api_base = (api_base or os.getenv("DEEPSEEK_API_BASE", "")).rstrip("/")
         self.api_key = api_key or os.getenv("DEEPSEEK_API_KEY", "")

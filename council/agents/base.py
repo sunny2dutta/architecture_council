@@ -33,7 +33,7 @@ class AgentBase:
     name: str = "Agent"
     role: str = "Expert"
     SYS_PROMPT: str = f"You are an expert architect.\n{OUTPUT_POLICY}"
-    max_tokens: int = 750  # override if a role needs more
+    max_tokens: int = 7000  # override if a role needs more
 
     def __init__(self, client: DeepSeekClient):
         self.client = client

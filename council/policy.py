@@ -52,3 +52,20 @@ class DecisionPolicy:
                 edr=edr,
                 ig_star=ig_star,
             )
+
+
+    def ask_user_cli(questions: list[str]) -> dict[str, str]:
+        if not questions:
+            print("[ASK] (no questions)")
+            return {}
+        print("\n[ASK] I need a few clarifications:")
+        answers = {}
+        for q in questions:
+            print(f"- {q}")
+            try:
+                a = input("  your answer: ").strip()
+            except EOFError:
+                print("  (stdin not available; leaving blank)")
+                a = ""
+            answers[q] = a
+        return answers
