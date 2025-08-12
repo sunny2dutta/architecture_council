@@ -17,12 +17,16 @@ class Scorecard:
 class DecisionOutput:
     route: str  # 'ASK' or 'DESIGN'
     reason: str
-    questions: List[str] = field(default_factory=list)  # when ASK
+    questions: List[str] = field(default_factory=list)       # when ASK
     c4_containers: List[Dict[str, Any]] = field(default_factory=list)  # when DESIGN
-    adrs: List[Dict[str, Any]] = field(default_factory=list)          # when DESIGN
-    non_functionals: Dict[str, Any] = field(default_factory=dict)     # when DESIGN
-    risks: List[str] = field(default_factory=list)                     # when DESIGN
-    open_questions: List[str] = field(default_factory=list)            # when DESIGN
+    adrs: List[Dict[str, Any]] = field(default_factory=list)           # when DESIGN
+    non_functionals: Dict[str, Any] = field(default_factory=dict)      # when DESIGN
+    risks: List[str] = field(default_factory=list)                      # when DESIGN
+    open_questions: List[str] = field(default_factory=list)             # when DESIGN
+
+    # NEW: make policy metrics available to the orchestrator/logger
+    edr: float = 0.0
+    ig_star: float = 0.0
 
 @dataclass
 class ProblemBrief:
